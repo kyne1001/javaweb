@@ -1,10 +1,15 @@
-package mysql;
+package dao;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Main {
+import domain.User;
 
-    public static void main(String[] args) throws Exception {
+public class Users {
+
+    public List<User> getUser() throws Exception {
+        List<User> result = new ArrayList<User>();
         Class.forName("com.mysql.jdbc.Driver");
         String conString = "jdbc:mysql://localhost/students"; 
         Connection con = DriverManager.getConnection(conString, "root", "");
@@ -12,10 +17,14 @@ public class Main {
         ResultSet rs = statement.executeQuery();
         
         while (rs.next()) {
-            System.out.println(rs.getString(1) + " " + rs.getString(2) + "\t" + rs.getString(3));
+            int id = Integer.parseInt(rs.getString(1));
+            String name = (rs.getString(2));
+            result.add(new User(id, name));
         }
         
         con.close();
+        
+        return result;
     }
-
+    
 }
