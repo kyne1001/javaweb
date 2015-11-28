@@ -3,8 +3,6 @@ package com.youtube.rest.status;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import com.sun.media.jfxmedia.Media;
-
 @Path("v1/status/")
 public class V1_status {
     
