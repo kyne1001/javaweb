@@ -5,7 +5,7 @@ import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import dao.Users;
+import dao.DataReader;
 import domain.User;
 
 @Path("v1/")
@@ -28,12 +28,18 @@ public class Basic {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public String returnUsers() throws Exception {
-        Users userClass = new Users();
-        List<User> users = userClass.getUser();
+        List<User> users = DataReader.getUsers();
         String result = "";
         for (User user: users) {
            result += "<p>" + user.getId() + ", " + user.getName() + ".</p>";
         }
         return result;
+    }
+    
+    @Path("/students")
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public String returnStudentsInJSONString() throws Exception {
+        return DataReader.getDataInJSON("students").toString();
     }
 }
