@@ -6,7 +6,10 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 import dao.DataReader;
 import domain.User;
@@ -105,6 +108,69 @@ public class Basic {
         String[] parameters = new String[] { String.valueOf(classId), name };
         JSONArray jsonArray = DataReader.getDataInJSONArray(sql, parameters);
         Response response = Response.ok(jsonArray).build();
+        return response;
+    }
+    
+    //POST example, object mapping version
+    @Path("students")
+    @POST
+    @Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addStudentObjectMap(String inComingString) {
+        Response response = null;
+        try {
+            System.out.println(inComingString);
+            ObjectMapper mapper = new ObjectMapper();
+            domain.Students students = mapper.readValue(inComingString, domain.Students.class);
+            
+            int httpStatusCode = dao.Students.addStudents(students.name, students.age, students.gender, students.classId);
+            if (httpStatusCode == 200) {
+                String returnString = "New student has been successfully added.";
+                response = Response.ok(returnString).build();
+            } else {
+                response = Response.status(500).entity("Unable to process request.").build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = Response.status(400).entity("Bad request.").build();
+        }
+        
+        return response;
+    }
+    
+    //POST example, JSON version
+    @Path("students-json")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addStudentJSON(String inComingString) throws Exception {
+        Response response = null;
+        JSONObject respJson = new JSONObject();
+        try {
+            System.out.println(inComingString);
+            JSONObject json = new JSONObject(inComingString);
+            
+            int httpStatusCode = dao.Students.addStudents(
+                    json.optString("name"),
+                    json.optInt("age"),
+                    json.optBoolean("gender"),
+                    json.optInt("classId"));
+            if (httpStatusCode == 200) {
+                respJson.put("status", 200);
+                respJson.put("message", "New student has been successfully added.");
+                response = Response.ok(respJson).build();
+            } else {
+                respJson.put("status", 500);
+                respJson.put("message", "Unable to process request.");
+                response = Response.status(500).entity(respJson).build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            respJson.put("status", 400);
+            respJson.put("message", "Bad request.");
+            response = Response.status(400).entity(respJson).build();
+        }
+        
         return response;
     }
 }
