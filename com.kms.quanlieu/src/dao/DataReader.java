@@ -31,6 +31,27 @@ public class DataReader {
         return jSONArray;
     }
     
+    public static JSONArray getDataInJSONArray(String sqlString, String[] parameters) {
+        JSONArray jSONArray = null;
+        
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection con = DriverManager.getConnection(conString, "root", "");
+            PreparedStatement statement = con.prepareStatement(sqlString);
+            for (int i = 0; i < parameters.length; i++) {
+                statement.setString(i + 1, parameters[i]);
+            }
+            ResultSet rs = statement.executeQuery();
+            jSONArray = ResultSetConverter.toJSONArray(rs);
+            con.close();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return jSONArray;
+    }
+    
     public static List<User> getUsers() {
         List<User> result = new ArrayList<User>();
         try {
