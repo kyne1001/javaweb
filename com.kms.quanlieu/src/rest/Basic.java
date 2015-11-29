@@ -99,7 +99,8 @@ public class Basic {
             return Response.status(400).entity(error).build();
         }
 
-        //Note: classId is int field, this is not a good practice to cast it into string
+        //Note: classId is integer, this isn't a good practice to cast it into string
+        //      the result is correct in this case but would wrong in other cases like "classId > ?".
         String sql = "select * from students where classId = ? and name = ?";
         String[] parameters = new String[] { String.valueOf(classId), name };
         JSONArray jsonArray = DataReader.getDataInJSONArray(sql, parameters);
