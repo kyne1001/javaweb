@@ -19,7 +19,7 @@ public class DataReader {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection con = DriverManager.getConnection(conString, "root", "");
-            PreparedStatement statement = con.prepareStatement("select * from users");
+            PreparedStatement statement = con.prepareStatement("select * from " + tableName);
             ResultSet rs = statement.executeQuery();
             jSONArray = ResultSetConverter.toJSONArray(rs);
             con.close();
