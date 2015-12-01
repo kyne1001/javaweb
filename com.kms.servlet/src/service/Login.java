@@ -48,6 +48,7 @@ public class Login extends HttpServlet {
             PrintWriter printWriter = response.getWriter();
             if (ok == 1) {
                 Cookie cookie = new Cookie("user", name);
+                cookie.setMaxAge(600); // 600 = 600 seconds
                 response.addCookie(cookie);
                 printWriter.write("Login successful");
             } else {
